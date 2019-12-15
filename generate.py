@@ -180,12 +180,17 @@ def generate_environment(corpus, dim, timeout, limited_capacity):
 
 def print_environment(problem):
     print('\n문제:')
-    for line in problem['env']:
+    n_row = len(problem['env'][0])
+    print('   |' + ''.join(['{:3d}|'.format(x) for x in list(range(n_row))]))
+    print('---|' + ('---|')*n_row)
+    for idx, line in enumerate(problem['env']):
+        print('{:2d}'.format(idx), end=' |')
         for element in line:
             if element == 0:
-                element = '__'
-            print(' {}'.format(element), end='')
+                element = '  '
+            print(' {}'.format(element), end='|')
         print()
+        print('---|' + ('---|')*n_row)
 
     print('\n정답:')
     pprint.pprint(problem['words'])
