@@ -6,6 +6,6 @@ ANAIN 모임의 딥러닝 초성 게임을 Crossword Puzzle 형식으로 만들�
 
 ## 개발 계획
 
-- [ ] 단어 데이터베이스에서 초성만을 추출
+- [x] 단어 데이터베이스에서 초성만을 추출
 - [ ] [Crossword Puzzle algorithm](https://stackoverflow.com/a/1021800)
 - [ ] 문제에 번호를 부여하고 지정된 번호의 게임을 진행

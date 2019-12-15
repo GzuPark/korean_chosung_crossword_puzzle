@@ -270,6 +270,7 @@ results/*
 !results/.gitkeep
 data/*
 !data/.gitkeep
+!data/example.txt
 
 # for developing
 *.ipynb
