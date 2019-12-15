@@ -49,8 +49,8 @@ def select_word(corpus, dim):
 
 
 def get_valid_words(selected, env, corpus):
-    row = selected['grid'][0]
-    col = selected['grid'][1]
+    col = selected['grid'][0]
+    row = selected['grid'][1]
     guide = selected['guide']
     word = selected['word']
     direction = selected['direction']
@@ -60,37 +60,37 @@ def get_valid_words(selected, env, corpus):
 
     for idx, letter in enumerate(list(word)):
         if direction == 'V':
-            if (env[row][col+idx] != 0) and (env[row][col+idx] != letter):
+            if (env[col+idx][row] != 0) and (env[col+idx][row] != letter):
                 return [False, []]
         elif direction == 'H':
-            if (env[row+idx][col] != 0) and (env[row+idx][col] != letter):
+            if (env[col][row+idx] != 0) and (env[col][row+idx] != letter):
                 return [False, []]
 
     if direction == 'V':
-        if (col > 0) and (env[row][col-1] != 0):
+        if (col > 0) and (env[col-1][row] != 0):
             return [False, []]
-        elif (col + len(word) < len(env[0])) and (env[row][col+len(word)] != 0):
+        elif (col + len(word) < len(env)) and (env[col+len(word)][row] != 0):
             return [False, []]
     elif direction == 'H':
-        if (row > 0) and (env[row-1][col] != 0):
+        if (row > 0) and (env[col][row-1] != 0):
             return [False, []]
-        elif (row + len(word) < len(env)) and (env[row+len(word)][col] != 0):
+        elif (row + len(word) < len(env[0])) and (env[col][row+len(word)] != 0):
             return [False, []]
 
     new_words = []
     for idx, letter in enumerate(list(word)):
         if direction == 'V':
-            if (env[row][col+idx] == 0) and ((row > 0) and (env[row-1][col+idx] != 0) or (row < len(env) - 1) and (env[row+1][col+idx] != 0)):
+            if (env[col+idx][row] == 0) and ((row > 0) and (env[col+idx][row-1] != 0) or (row < len(env) - 1) and (env[col+idx][row+1] != 0)):
                 _word = [letter]
 
                 l_idx = 1
-                while (row + l_idx < len(env[0])) and (env[row+l_idx][col+idx] != 0):
-                    _word.append(env[row+l_idx][col+idx])
+                while (row + l_idx < len(env[0])) and (env[col+idx][row+l_idx] != 0):
+                    _word.append(env[col+idx][row+l_idx])
                     l_idx += 1
 
                 l_idx = 1
-                while (row - l_idx > 0) and (env[row-l_idx][col+idx] != 0):
-                    _word.insert(0, env[row-l_idx][col+idx])
+                while (row - l_idx > 0) and (env[col+idx][row-l_idx] != 0):
+                    _word.insert(0, env[col+idx][row-l_idx])
                     l_idx += 1
 
                 _word = ''.join(_word)
@@ -105,17 +105,17 @@ def get_valid_words(selected, env, corpus):
                 }
                 new_words.append(temp)
         elif direction == 'H':
-            if (env[row+idx][col] == 0) and ((col > 0) and (env[row+idx][col-1] != 0) or (col < len(env[0]) - 1) and (env[row+idx][col+1] != 0)):
+            if (env[col][row+idx] == 0) and ((col > 0) and (env[col-1][row+idx] != 0) or (col < len(env[0]) - 1) and (env[col+1][row+idx] != 0)):
                 _word = [letter]
 
                 l_idx = 1
-                while (col + l_idx < len(env)) and (env[row+idx][col+l_idx] != 0):
-                    _word.append(env[row+idx][col+l_idx])
+                while (col + l_idx < len(env)) and (env[col+l_idx][row+idx] != 0):
+                    _word.append(env[col+l_idx][row+idx])
                     l_idx += 1
 
                 l_idx = 1
-                while (col - l_idx > 0) and (env[row+idx][col-l_idx] != 0):
-                    _word.insert(0, env[row+idx][col-l_idx])
+                while (col - l_idx > 0) and (env[col-l_idx][row+idx] != 0):
+                    _word.insert(0, env[col-l_idx][row+idx])
                     l_idx += 1
 
                 _word = ''.join(_word)
@@ -133,15 +133,15 @@ def get_valid_words(selected, env, corpus):
 
 
 def add_word_to_env(selected, env):
-    row = selected['grid'][0]
-    col = selected['grid'][1]
+    col = selected['grid'][0]
+    row = selected['grid'][1]
     word = selected['word']
 
-    if selected['direction'] == 'H':
+    if selected['direction'] == 'V':
         for idx, letter in enumerate(list(word)):
-            env[row+idx][col] = letter
-    elif selected['direction'] == 'V':
-        env[row][col:col+len(list(word))] = list(word)
+            env[col+idx][row] = letter
+    elif selected['direction'] == 'H':
+        env[col][row:row+len(list(word))] = list(word)
     return env
 
 
