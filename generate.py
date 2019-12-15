@@ -40,7 +40,7 @@ def extract_chosung(words):
 def select_word(corpus, dim):
     random_state = random.randint(0, len(corpus) - 1)
     selected = {
-        'answer': corpus[random_state]['answer'],
+        'guide': corpus[random_state]['guide'],
         'word': corpus[random_state]['word'],
         'grid': [random.randint(0, dim[0] - 1), random.randint(0, dim[1] - 1)],
         'direction': 'V' if random.random() > 0.5 else 'H'
@@ -51,11 +51,11 @@ def select_word(corpus, dim):
 def get_valid_words(selected, env, corpus):
     row = selected['grid'][0]
     col = selected['grid'][1]
-    answer = selected['answer']
+    guide = selected['guide']
     word = selected['word']
     direction = selected['direction']
 
-    if (direction == 'V' and col + len(word) > len(env[0])) or (direction == 'H' and row + len(word) > len(env)):
+    if (direction == 'V' and col + len(word) > len(env)) or (direction == 'H' and row + len(word) > len(env[0])):
         return [False, []]
 
     for idx, letter in enumerate(list(word)):
@@ -99,7 +99,7 @@ def get_valid_words(selected, env, corpus):
 
                 temp = {
                     'direction': direction,
-                    'answer': answer,
+                    'guide': guide,
                     'word': _word,
                     'grid': [row-l_idx+1, col+idx]
                 }
@@ -124,7 +124,7 @@ def get_valid_words(selected, env, corpus):
 
                 temp = {
                     'direction': direction,
-                    'answer': answer,
+                    'guide': guide,
                     'word': _word,
                     'grid': [row+idx, col-l_idx+1]
                 }
@@ -165,7 +165,7 @@ def generate_environment(corpus, dim, timeout, limited_capacity):
             candidates.append(new)
 
         candidates = sorted(candidates, key=lambda x: len(x['word']), reverse=True)
-        new = candidates[0]
+        new = candidates[random.randint(0, len(candidates) - 1)]
 
         if new['word'] not in [e['word'] for e in added_words]:
             env = add_word_to_env(new, env)
@@ -210,7 +210,7 @@ def main():
     args = get_args()
     words = read_database(args.file_path)
     chosung = extract_chosung(words)
-    corpus = [{'answer': w, 'word': c} for w, c in zip(words, chosung)]
+    corpus = [{'guide': w, 'word': c} for w, c in zip(words, chosung)]
     problem = generate_environment(corpus, args.dim, args.timeout, args.capacity)
     print_environment(problem)
 
