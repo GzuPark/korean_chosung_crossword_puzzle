@@ -89,6 +89,7 @@ class Game(object):
             winner = input('"{}" 문제를 맞춘 팀은? '.format(word))
             if re.match(r'^[0-9]+$', winner):
                 if int(winner) in list(range(len(self.teams))):
+                    print('\n의도한 답은 "{}" 입니다.'.format(_word['word'], _word['guide']))
                     w_flag = False
         winner = int(winner)
         self.teams[winner].score += 1
