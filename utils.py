@@ -55,7 +55,7 @@ def pickle_load(fname):
     return db
 
 
-def preview(problem):
+def preview(problem, with_answer=True):
     print('\n문제:')
     n_col = len(problem['env'][0])
     print('   |' + ''.join(['{:3d}|'.format(x) for x in list(range(n_col))]))
@@ -69,8 +69,9 @@ def preview(problem):
         print()
         print('---|' + ('---|')*n_col)
 
-    print('\n정답:')
-    pprint.pprint(problem['words'])
+    if with_answer is True:
+        print('\n정답:')
+        pprint.pprint(problem['words'])
 
 
 def clear():
