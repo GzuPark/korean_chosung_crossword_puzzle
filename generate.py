@@ -1,8 +1,11 @@
 import argparse
+import datetime
 import os
 import pprint
 import random
 import time
+
+from utils import pickle_load, safe_pickle_dump
 
 
 def kor_char_chosung_decompose(x):
@@ -180,9 +183,9 @@ def generate_environment(corpus, dim, timeout, limited_capacity):
 
 def print_environment(problem):
     print('\n문제:')
-    n_row = len(problem['env'][0])
-    print('   |' + ''.join(['{:3d}|'.format(x) for x in list(range(n_row))]))
-    print('---|' + ('---|')*n_row)
+    n_col = len(problem['env'][0])
+    print('   |' + ''.join(['{:3d}|'.format(x) for x in list(range(n_col))]))
+    print('---|' + ('---|')*n_col)
     for idx, line in enumerate(problem['env']):
         print('{:2d}'.format(idx), end=' |')
         for element in line:
@@ -190,7 +193,7 @@ def print_environment(problem):
                 element = '  '
             print(' {}'.format(element), end='|')
         print()
-        print('---|' + ('---|')*n_row)
+        print('---|' + ('---|')*n_col)
 
     print('\n정답:')
     pprint.pprint(problem['words'])
@@ -205,10 +208,26 @@ def get_args():
     args = parser.parse_args()
 
     realpath = os.path.dirname(os.path.realpath(__file__))
-    args.data_path = os.path.join(realpath, 'data')
-    args.file_path = os.path.join(args.data_path, args.file)
-    args.results_path = os.path.join(realpath, 'results')
+    data_path = os.path.join(realpath, 'data')
+    args.file_path = os.path.join(data_path, args.file)
+    args.db_path = os.path.join(data_path, 'db.p')
     return args
+
+
+def save_problem(problem, dim, db_path):
+    print()
+    do_save = input('문제를 저장하시겠습니까? (y/n) : ')
+    if do_save.lower() in ['y', 'yes']:
+        db = pickle_load(db_path)
+        _KST = datetime.timezone(datetime.timedelta(hours=9))
+        _id = datetime.datetime.now(_KST).strftime('%Y%m%d%H%M%S')
+        db = {
+            'id': _id,
+            'grid': dim,
+            'problem': problem
+        }
+        safe_pickle_dump(db, db_path)
+        print('문제 저장 완료! (ID: {})'.format(_id))
 
 
 def main():
@@ -218,6 +237,7 @@ def main():
     corpus = [{'guide': w, 'word': c} for w, c in zip(words, chosung)]
     problem = generate_environment(corpus, args.dim, args.timeout, args.capacity)
     print_environment(problem)
+    save_problem(problem, args.dim, args.db_path)
 
 
 if __name__ == '__main__':
