@@ -5,7 +5,7 @@ import pprint
 import random
 import time
 
-from utils import pickle_load, safe_pickle_dump
+from utils import Config, pickle_load, safe_pickle_dump
 
 
 def kor_char_chosung_decompose(x):
@@ -199,6 +199,23 @@ def print_environment(problem):
     pprint.pprint(problem['words'])
 
 
+def save_problem(problem, dim, db_path):
+    print()
+    do_save = input('문제를 저장하시겠습니까? (y/n) : ')
+    if do_save.lower() in ['y', 'yes']:
+        db = pickle_load(db_path)
+        _KST = datetime.timezone(datetime.timedelta(hours=9))
+        _id = datetime.datetime.now(_KST).strftime('%Y%m%d%H%M%S')
+        _problem = {
+            'grid': dim,
+            'env': problem['env'],
+            'words': problem['words']
+        }
+        db[_id] = _problem
+        safe_pickle_dump(db, db_path)
+        print('문제 저장 완료! (ID: {})'.format(_id))
+
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file', type=str, default='example.txt')
@@ -207,27 +224,10 @@ def get_args():
     parser.add_argument('-c', '--capacity', type=float, default=0.5)
     args = parser.parse_args()
 
-    realpath = os.path.dirname(os.path.realpath(__file__))
-    data_path = os.path.join(realpath, 'data')
+    data_path = Config.data_path
     args.file_path = os.path.join(data_path, args.file)
-    args.db_path = os.path.join(data_path, 'db.p')
+    args.db_path = Config.db_path
     return args
-
-
-def save_problem(problem, dim, db_path):
-    print()
-    do_save = input('문제를 저장하시겠습니까? (y/n) : ')
-    if do_save.lower() in ['y', 'yes']:
-        db = pickle_load(db_path)
-        _KST = datetime.timezone(datetime.timedelta(hours=9))
-        _id = datetime.datetime.now(_KST).strftime('%Y%m%d%H%M%S')
-        db = {
-            'id': _id,
-            'grid': dim,
-            'problem': problem
-        }
-        safe_pickle_dump(db, db_path)
-        print('문제 저장 완료! (ID: {})'.format(_id))
 
 
 def main():

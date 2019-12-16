@@ -5,6 +5,12 @@ import tempfile
 from contextlib import contextmanager
 
 
+class Config(object):
+    realpath = os.path.dirname(os.path.realpath(__file__))
+    data_path = os.path.join(realpath, 'data')
+    db_path = os.path.join(data_path, 'db.p')
+
+
 @contextmanager
 def _tempfile(*args, **kwargs):
     fd, name = tempfile.mkstemp(*args, **kwargs)
