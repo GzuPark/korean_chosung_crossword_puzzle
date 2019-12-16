@@ -1,11 +1,10 @@
 import argparse
 import datetime
 import os
-import pprint
 import random
 import time
 
-from utils import Config, pickle_load, safe_pickle_dump
+from utils import Config, pickle_load, safe_pickle_dump, preview
 
 
 def kor_char_chosung_decompose(x):
@@ -181,24 +180,6 @@ def generate_environment(corpus, dim, timeout, limited_capacity):
     return {'env': env, 'words': added_words}
 
 
-def print_environment(problem):
-    print('\n문제:')
-    n_col = len(problem['env'][0])
-    print('   |' + ''.join(['{:3d}|'.format(x) for x in list(range(n_col))]))
-    print('---|' + ('---|')*n_col)
-    for idx, line in enumerate(problem['env']):
-        print('{:2d}'.format(idx), end=' |')
-        for element in line:
-            if element == 0:
-                element = '  '
-            print(' {}'.format(element), end='|')
-        print()
-        print('---|' + ('---|')*n_col)
-
-    print('\n정답:')
-    pprint.pprint(problem['words'])
-
-
 def save_problem(problem, dim, db_path):
     print()
     do_save = input('문제를 저장하시겠습니까? (y/n) : ')
@@ -236,7 +217,7 @@ def main():
     chosung = extract_chosung(words)
     corpus = [{'guide': w, 'word': c} for w, c in zip(words, chosung)]
     problem = generate_environment(corpus, args.dim, args.timeout, args.capacity)
-    print_environment(problem)
+    preview(problem)
     save_problem(problem, args.dim, args.db_path)
 
 

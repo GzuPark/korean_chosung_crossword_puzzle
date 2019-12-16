@@ -1,5 +1,6 @@
 import os
 import pickle
+import pprint
 import tempfile
 
 from contextlib import contextmanager
@@ -52,3 +53,28 @@ def pickle_load(fname):
         print('error loading existing database:\n{}\nstarting from an empty database'.format(e))
         db = {}
     return db
+
+
+def preview(problem):
+    print('\n문제:')
+    n_col = len(problem['env'][0])
+    print('   |' + ''.join(['{:3d}|'.format(x) for x in list(range(n_col))]))
+    print('---|' + ('---|')*n_col)
+    for idx, line in enumerate(problem['env']):
+        print('{:2d}'.format(idx), end=' |')
+        for element in line:
+            if element == 0:
+                element = '  '
+            print(' {}'.format(element), end='|')
+        print()
+        print('---|' + ('---|')*n_col)
+
+    print('\n정답:')
+    pprint.pprint(problem['words'])
+
+
+def clear():
+    if os.name == 'posix':
+        os.system('clear')
+    else:
+        os.system('cls')
